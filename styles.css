@@ -1,0 +1,176 @@
+:root {
+  color-scheme: light;
+  --bg: #f4f1e8;
+  --panel: #fffdf7;
+  --border: #222;
+  --text: #1f1f1f;
+  --muted: #5f5a4f;
+  --snake: #2f6f3e;
+  --snake-head: #16361f;
+  --food: #c9472d;
+  --empty: #efe8d8;
+  --button: #e6dcc7;
+  --button-active: #d9ccb3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.panel {
+  width: min(100%, 560px);
+  background: var(--panel);
+  border: 2px solid var(--border);
+  padding: 20px;
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.1);
+}
+
+.hud {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.label,
+.value,
+.help {
+  margin: 0;
+}
+
+.label {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.status-wrap {
+  text-align: right;
+}
+
+.status {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: var(--button);
+  border: 2px solid var(--border);
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+button:hover,
+button:focus-visible {
+  background: var(--button-active);
+}
+
+.board {
+  --size: min(76vw, 480px);
+  width: var(--size);
+  height: var(--size);
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  grid-template-rows: repeat(16, 1fr);
+  gap: 2px;
+  padding: 2px;
+  background: var(--border);
+  margin-bottom: 14px;
+  touch-action: none;
+}
+
+.cell {
+  background: var(--empty);
+}
+
+.cell.snake {
+  background: var(--snake);
+}
+
+.cell.head {
+  background: var(--snake-head);
+}
+
+.cell.food {
+  background: var(--food);
+}
+
+.help {
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.control {
+  min-height: 48px;
+}
+
+.up {
+  grid-column: 2;
+}
+
+.left {
+  grid-column: 1;
+}
+
+.down {
+  grid-column: 2;
+}
+
+.right {
+  grid-column: 3;
+}
+
+@media (max-width: 520px) {
+  .panel {
+    padding: 16px;
+  }
+
+  .hud {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .status-wrap {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+  }
+}

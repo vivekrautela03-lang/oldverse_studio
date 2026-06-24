@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ether Control Center</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero panel">
+      <div class="hero-copy">
+        <p class="eyebrow">Local AI Operator</p>
+        <h1>Ether</h1>
+        <p class="lede">
+          A locally hosted assistant with chat, voice controls, file access,
+          PowerShell tools, and self-maintenance inside its own codebase.
+        </p>
+        <div class="hero-chips">
+          <span class="chip" id="assistant-name-chip">Booting...</span>
+          <span class="chip" id="workspace-chip">Workspace unknown</span>
+          <span class="chip" id="voice-chip">Voice idle</span>
+        </div>
+      </div>
+
+      <div class="orb-stack" aria-hidden="true">
+        <div class="orb-ring orb-ring-outer"></div>
+        <div class="orb-ring orb-ring-mid"></div>
+        <div class="orb-core"></div>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="panel conversation-panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Conversation</p>
+            <h2>Mission Feed</h2>
+          </div>
+          <button class="ghost-button" id="clear-chat" type="button">Clear</button>
+        </div>
+
+        <div class="message-list" id="message-list" aria-live="polite"></div>
+
+        <form class="composer" id="composer">
+          <label class="field">
+            <span class="field-label">Tell Ether what to do</span>
+            <textarea
+              id="prompt-input"
+              rows="4"
+              placeholder="Example: Inspect your own code, suggest improvements, then patch the UI."
+            ></textarea>
+          </label>
+
+          <div class="permission-grid">
+            <label class="toggle">
+              <input id="allow-shell" type="checkbox">
+              <span>Allow shell commands</span>
+            </label>
+            <label class="toggle">
+              <input id="allow-file-write" type="checkbox">
+              <span>Allow file writes</span>
+            </label>
+            <label class="toggle">
+              <input id="allow-self-edit" type="checkbox">
+              <span>Allow self-updates</span>
+            </label>
+          </div>
+
+          <div class="composer-actions">
+            <button class="primary-button" id="send-button" type="submit">Send to Ether</button>
+            <button class="ghost-button" id="voice-button" type="button">Start voice input</button>
+            <button class="ghost-button" id="speak-button" type="button">Read last reply</button>
+          </div>
+        </form>
+      </section>
+
+      <aside class="control-stack">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Brain Link</p>
+              <h2>Model Connection</h2>
+            </div>
+            <button class="ghost-button" id="refresh-status" type="button">Refresh</button>
+          </div>
+
+          <div class="field-grid">
+            <label class="field">
+              <span class="field-label">OpenAI-compatible base URL</span>
+              <input id="base-url-input" type="text" placeholder="https://api.openai.com/v1">
+            </label>
+            <label class="field">
+              <span class="field-label">Model</span>
+              <input id="model-input" type="text" placeholder="gpt-4.1-mini">
+            </label>
+            <label class="field">
+              <span class="field-label">API key</span>
+              <input id="api-key-input" type="password" placeholder="sk-...">
+            </label>
+          </div>
+
+          <p class="muted">
+            Ether works offline as a control center, and it becomes a full AI
+            assistant once you connect a model key.
+          </p>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Quick Orders</p>
+              <h2>Launch Tasks</h2>
+            </div>
+          </div>
+
+          <div class="quick-grid">
+            <button class="quick-action" data-prompt="Inspect your own code, summarize the architecture, and recommend the next three upgrades.">
+              Inspect yourself
+            </button>
+            <button class="quick-action" data-prompt="Scan the workspace, identify the important files, and tell me how you would improve this project.">
+              Scan the project
+            </button>
+            <button class="quick-action" data-prompt="Create a plan to add voice commands, automation hooks, and a cleaner memory system to Ether.">
+              Plan new features
+            </button>
+            <button class="quick-action" data-prompt="Review the current app for risky permissions, fragile code, and missing guardrails.">
+              Safety review
+            </button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Computer Access</p>
+              <h2>Workspace & Shell</h2>
+            </div>
+          </div>
+
+          <form class="inline-form" id="path-form">
+            <input id="path-input" type="text" placeholder="Browse a folder path">
+            <button class="ghost-button" type="submit">Browse</button>
+          </form>
+
+          <div class="path-list" id="path-list"></div>
+
+          <form class="inline-form" id="shell-form">
+            <input id="shell-input" type="text" placeholder="Run a PowerShell command from this app">
+            <button class="ghost-button" type="submit">Run</button>
+          </form>
+
+          <pre class="output-card" id="shell-output">Shell output will appear here.</pre>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Code Access</p>
+              <h2>Editor & Self Files</h2>
+            </div>
+            <button class="ghost-button" id="inspect-self" type="button">Inspect self</button>
+          </div>
+
+          <label class="field">
+            <span class="field-label">Selected file</span>
+            <input id="editor-path" type="text" placeholder="Pick a file from the list or paste a path">
+          </label>
+
+          <textarea id="editor" class="editor" spellcheck="false"></textarea>
+
+          <div class="composer-actions">
+            <button class="primary-button" id="load-file" type="button">Load file</button>
+            <button class="ghost-button" id="save-file" type="button">Save file</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">System Pulse</p>
+              <h2>Status & Activity</h2>
+            </div>
+          </div>
+
+          <div class="status-grid" id="status-grid"></div>
+          <ul class="activity-list" id="activity-list"></ul>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <template id="message-template">
+    <article class="message">
+      <div class="message-meta">
+        <span class="message-role"></span>
+        <span class="message-time"></span>
+      </div>
+      <pre class="message-body"></pre>
+    </article>
+  </template>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
