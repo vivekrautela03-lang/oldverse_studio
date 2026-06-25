@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import fs from "fs";
 import path from "path";
 
-import { FilmsPreviewSection } from "@/components/sections/home/films-preview-section";
+import { InstagramSection } from "@/components/sections/home/instagram-section";
 import { GallerySection } from "@/components/sections/home/gallery-section";
 import { HeroSection } from "@/components/sections/home/hero-section";
 import { QuoteSection } from "@/components/sections/home/quote-section";
@@ -41,7 +41,7 @@ export default function HomePage() {
     <>
       <HeroSection storyData={storyData} />
       <ServicesSection />
-      <FilmsPreviewSection />
+      <InstagramSection />
       <QuoteSection />
       <GallerySection />
       <WorkWithUsSection />
