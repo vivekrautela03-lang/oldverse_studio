@@ -54,7 +54,7 @@ const instagramPosts = [
 
 export function InstagramSection() {
   return (
-    <section className="py-20 sm:py-24">
+    <section className="pt-32 pb-20 sm:pt-40 sm:pb-24">
       <Container>
         {/* Header Block */}
         <div className="text-center flex flex-col items-center">
