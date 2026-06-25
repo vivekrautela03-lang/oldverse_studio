@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Container } from "@/components/ui/container";
@@ -336,6 +337,34 @@ export function HeroSection({ storyData }: HeroSectionProps) {
         {/* Visual Vignette & Scanlines filters */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_40%,rgba(10,8,7,0.72)_82%,rgba(10,8,7,0.92)_100%)] pointer-events-none z-10" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.12)_50%)] bg-[size:100%_4px] opacity-50 pointer-events-none z-10" />
+
+        {/* Scroll Indicator at Frame 0 */}
+        {originalFrame < 15 && (
+          <div 
+            className="absolute bottom-[16vh] left-1/2 -translate-x-1/2 flex flex-col items-center z-20 pointer-events-none transition-opacity duration-300"
+            style={{ opacity: Math.max(0, 1 - originalFrame / 10) }}
+          >
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-[0.65rem] tracking-[0.3em] text-[#f5e6d3]/70 uppercase font-medium animate-pulse">
+                Scroll to explore
+              </span>
+              <div className="w-5 h-8 border border-white/20 rounded-full flex justify-center p-[3px]">
+                <motion.div 
+                  animate={{
+                    y: [0, 10, 0],
+                    opacity: [1, 0.2, 1]
+                  }}
+                  transition={{
+                    duration: 1.8,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="w-1 h-2 bg-[#e0a96d] rounded-full"
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Content Overlays */}
         <div className="relative z-20 w-full h-full flex items-end">
