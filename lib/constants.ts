@@ -1,10 +1,10 @@
 export const siteConfig = {
   name: "The OldVerse",
-  tagline: "Stories Beyond The Screen",
+  tagline: "Every Story Deserves A Stage.",
   description:
-    "The OldVerse is a production house and creative studio creating films, cinematic reels, web series, and music videos that people can genuinely connect with.",
+    "The OldVerse is a platform where creators can share their vision with the world. We provide the tools, the community, and the audience to help stories grow beyond boundaries.",
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://theoldverse.vercel.app",
-  email: "theoldverse@gmail.com",
+  email: "hello@theoldverse.com",
   phone: "+91 9068850966",
   instagram: "https://instagram.com/theoldverse_",
   instagramHandle: "@theoldverse_",
@@ -14,8 +14,8 @@ export const siteConfig = {
 
 export const navigationItems = [
   { href: "/home", label: "Home" },
-  { href: "/films", label: "Films" },
-  { href: "/about", label: "About" },
-  { href: "/team", label: "Team" },
-  { href: "/contact", label: "Contact" }
+  { href: "/creators", label: "Creators" },
+  { href: "/categories", label: "Categories" },
+  { href: "/community", label: "Community" },
+  { href: "/studio", label: "Studio" }
 ] as const;

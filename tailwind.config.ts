@@ -23,10 +23,22 @@ const config: Config = {
         beige: "var(--beige)",
         brown: "var(--brown)",
         coffee: "var(--coffee)",
-        charcoal: "var(--charcoal)"
+        charcoal: "var(--charcoal)",
+        brand: {
+          black: "#0B0B0B",
+          graphite: "#111111",
+          slate: "#1A1A1A",
+          ivory: "#FDFDFD",
+          gold: "#F5A623",
+          amber: "#FF6C32",
+          crimson: "#C62828",
+          blue: "#3A86FF"
+        }
       },
       fontFamily: {
-        display: ["var(--font-playfair)", "serif"],
+        display: ["var(--font-bebas-neue)", "sans-serif"],
+        bebas: ["var(--font-bebas-neue)", "sans-serif"],
+        space: ["var(--font-space-grotesk)", "sans-serif"],
         sans: ["var(--font-inter)", "system-ui", "sans-serif"]
       },
       boxShadow: {

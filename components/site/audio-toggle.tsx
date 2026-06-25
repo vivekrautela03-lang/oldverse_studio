@@ -1,6 +1,7 @@
 "use client";
 
 import { startTransition, useCallback, useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
 type AudioRig = {
@@ -18,6 +19,7 @@ function getAudioContextClass() {
 }
 
 export function AudioToggle() {
+  const pathname = usePathname();
   const [enabled, setEnabled] = useState(false);
   const rigRef = useRef<AudioRig | null>(null);
 
@@ -146,6 +148,10 @@ export function AudioToggle() {
 
     void startAmbient();
   }, [enabled, startAmbient]);
+
+  if (pathname === "/login" || pathname === "/signup") {
+    return null;
+  }
 
   return (
     <motion.button

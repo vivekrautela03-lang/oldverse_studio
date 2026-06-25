@@ -3,11 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --cream: #f5e6d3;
-  --beige: #e6d5c3;
-  --brown: #8b6f47;
-  --coffee: #3a2e25;
-  --charcoal: #1a1a1a;
+  --cream: #FDFDFD;       /* Ivory White */
+  --beige: #F5A623;       /* Cinema Gold */
+  --brown: #FF6C32;       /* Amber */
+  --coffee: #111111;      /* Graphite */
+  --charcoal: #0B0B0B;    /* Deep Black */
+  
+  --brand-black: #0B0B0B;
+  --brand-graphite: #111111;
+  --brand-slate: #1A1A1A;
+  --brand-ivory: #FDFDFD;
+  --brand-gold: #F5A623;
+  --brand-amber: #FF6C32;
 }
 
 @layer base {
@@ -22,15 +29,12 @@
   body {
     @apply font-sans antialiased;
     min-height: 100vh;
-    background:
-      radial-gradient(circle at top, rgba(139, 111, 71, 0.22), transparent 36%),
-      radial-gradient(circle at 85% 15%, rgba(245, 230, 211, 0.08), transparent 26%),
-      linear-gradient(180deg, #16110f 0%, #0f0b0a 100%);
+    background: #0B0B0B;
     color: var(--cream);
   }
 
   ::selection {
-    background: rgba(245, 230, 211, 0.2);
+    background: rgba(245, 166, 35, 0.2);
     color: var(--cream);
   }
 }

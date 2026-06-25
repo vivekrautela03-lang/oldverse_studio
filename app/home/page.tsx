@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 
 import { FilmsPreviewSection } from "@/components/sections/home/films-preview-section";
+import { TrendingSection } from "@/components/sections/home/trending-section";
 import { GallerySection } from "@/components/sections/home/gallery-section";
 import { HeroSection } from "@/components/sections/home/hero-section";
 import { QuoteSection } from "@/components/sections/home/quote-section";
@@ -40,6 +41,7 @@ export default function HomePage() {
   return (
     <>
       <HeroSection storyData={storyData} />
+      <TrendingSection />
       <ServicesSection />
       <FilmsPreviewSection />
       <QuoteSection />

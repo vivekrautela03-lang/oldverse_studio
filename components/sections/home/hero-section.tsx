@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Container } from "@/components/ui/container";
-import { ButtonLink } from "@/components/ui/button";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -377,31 +376,50 @@ export function HeroSection({ storyData }: HeroSectionProps) {
             >
               <Container>
                 <div className="max-w-4xl">
-                  <p className="mb-5 inline-flex rounded-full border border-white/12 bg-[rgba(255,255,255,0.06)] px-4 py-2 text-[0.72rem] uppercase tracking-[0.35em] text-[#f5e6d3]/85 backdrop-blur-md">
-                    Production House • Creative Studio
+                  <p className="mb-4 font-space text-xs font-semibold uppercase tracking-[0.3em] text-brand-gold">
+                    THE OLDVERSE ORIGINAL
                   </p>
 
-                  <h1 className="max-w-3xl font-display text-5xl leading-[0.94] text-[#f5e6d3] sm:text-6xl lg:text-[6.3rem]">
-                    Stories Beyond The Screen
+                  <h1 className="max-w-3xl font-bebas text-6xl leading-[0.9] text-brand-ivory sm:text-7xl lg:text-[7.5rem] tracking-wide">
+                    NISHAAN
                   </h1>
 
-                  <p className="mt-6 max-w-2xl text-base leading-8 text-[#f5e6d3]/80 sm:text-lg font-light">
-                    We create films, stories, and visual experiences that connect with people through emotion,
-                    creativity, and cinematic storytelling.
+                  <p className="mt-6 max-w-xl font-sans text-base leading-8 text-brand-ivory/80 sm:text-lg font-light">
+                    A psychological thriller that goes deep into fear, guilt and choices.
                   </p>
 
-                  <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <ButtonLink href="https://instagram.com/theoldverse_" external>
-                      Watch Films
-                    </ButtonLink>
-                    <ButtonLink href="/home#what-we-do" variant="secondary">
-                      Explore The OldVerse
-                    </ButtonLink>
+                  <div className="mt-8 flex flex-wrap gap-4 items-center">
+                    <motion.a
+                      href="/films"
+                      whileHover={{ scale: 1.02, y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="inline-flex items-center gap-2 rounded-lg bg-brand-gold px-7 py-3 text-sm font-semibold tracking-wider uppercase text-brand-black transition-all shadow-glow hover:bg-white"
+                    >
+                      <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                      Watch Now
+                    </motion.a>
+                    
+                    <motion.a
+                      href="https://youtube.com/@theoldverse_07"
+                      target="_blank"
+                      rel="noreferrer"
+                      whileHover={{ scale: 1.02, y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-7 py-3 text-sm font-semibold tracking-wider uppercase text-brand-ivory transition-all hover:bg-white/10 hover:border-white/30"
+                    >
+                      <svg className="h-4 w-4 fill-none stroke-current" strokeWidth="2" viewBox="0 0 24 24">
+                        <polygon points="23 7 16 12 23 17 23 7" />
+                        <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                      </svg>
+                      Trailer
+                    </motion.a>
                   </div>
 
-                  <div className="mt-16 flex items-center gap-3 text-xs uppercase tracking-[0.28em] text-[#f5e6d3]/55">
-                    <span className="h-px w-12 bg-cream/35" />
-                    Scroll for the story
+                  <div className="mt-16 flex items-center gap-3 font-space text-[0.65rem] uppercase tracking-[0.35em] text-brand-ivory/40">
+                    <span className="h-px w-10 bg-brand-gold/30" />
+                    Scroll to play story
                   </div>
                 </div>
               </Container>
