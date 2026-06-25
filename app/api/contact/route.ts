@@ -5,8 +5,7 @@ import { siteConfig } from "@/lib/constants";
 type ContactPayload = {
   name?: string;
   email?: string;
-  projectType?: string;
-  budget?: string;
+  mobileNumber?: string;
   message?: string;
 };
 
@@ -27,11 +26,10 @@ export async function POST(request: Request) {
 
     const name = payload.name?.trim();
     const email = payload.email?.trim();
-    const projectType = payload.projectType?.trim();
-    const budget = payload.budget?.trim();
+    const mobileNumber = payload.mobileNumber?.trim();
     const message = payload.message?.trim();
 
-    if (!name || !email || !projectType || !budget || !message) {
+    if (!name || !email || !mobileNumber || !message) {
       return NextResponse.json(
         { message: "Please complete every field before sending your inquiry." },
         { status: 400 }
@@ -64,14 +62,13 @@ export async function POST(request: Request) {
           from: fromEmail,
           to: [toEmail],
           reply_to: email,
-          subject: `New ${projectType} inquiry from ${name}`,
+          subject: `New inquiry from ${name}`,
           html: `
             <div style="font-family: Inter, Arial, sans-serif; padding: 24px; color: #1a1a1a;">
               <h2 style="margin-bottom: 12px;">New inquiry from The OldVerse website</h2>
               <p><strong>Name:</strong> ${escapeHtml(name)}</p>
               <p><strong>Email:</strong> ${escapeHtml(email)}</p>
-              <p><strong>Project Type:</strong> ${escapeHtml(projectType)}</p>
-              <p><strong>Budget:</strong> ${escapeHtml(budget)}</p>
+              <p><strong>Mobile Number:</strong> ${escapeHtml(mobileNumber)}</p>
               <p><strong>Message:</strong></p>
               <p style="line-height: 1.7;">${escapeHtml(message).replaceAll("\n", "<br />")}</p>
             </div>

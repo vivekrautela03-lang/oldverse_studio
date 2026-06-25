@@ -3,22 +3,19 @@
 import { startTransition, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { budgetOptions, projectTypes } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 const initialForm = {
   name: "",
   email: "",
-  projectType: projectTypes[0],
-  budget: budgetOptions[0],
+  mobileNumber: "",
   message: ""
 };
 
 type InquiryFormState = {
   name: string;
   email: string;
-  projectType: string;
-  budget: string;
+  mobileNumber: string;
   message: string;
 };
 
@@ -105,36 +102,17 @@ export function InquiryForm() {
           />
         </label>
 
-        <label className="space-y-2">
-          <span className="text-xs uppercase tracking-[0.32em] text-cream/55">Project Type</span>
-          <select
-            name="projectType"
-            value={formData.projectType}
-            onChange={(event) => setFormData((state) => ({ ...state, projectType: event.target.value }))}
+        <label className="space-y-2 md:col-span-2">
+          <span className="text-xs uppercase tracking-[0.32em] text-cream/55">Mobile Number</span>
+          <input
+            required
+            type="tel"
+            name="mobileNumber"
+            value={formData.mobileNumber}
+            onChange={(event) => setFormData((state) => ({ ...state, mobileNumber: event.target.value }))}
             className={fieldClasses}
-          >
-            {projectTypes.map((projectType) => (
-              <option key={projectType} value={projectType} className="bg-[#211916]">
-                {projectType}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="space-y-2">
-          <span className="text-xs uppercase tracking-[0.32em] text-cream/55">Budget</span>
-          <select
-            name="budget"
-            value={formData.budget}
-            onChange={(event) => setFormData((state) => ({ ...state, budget: event.target.value }))}
-            className={fieldClasses}
-          >
-            {budgetOptions.map((budget) => (
-              <option key={budget} value={budget} className="bg-[#211916]">
-                {budget}
-              </option>
-            ))}
-          </select>
+            placeholder="Your mobile number"
+          />
         </label>
       </div>
 
