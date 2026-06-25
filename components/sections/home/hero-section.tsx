@@ -54,55 +54,91 @@ export function HeroSection({ storyData }: HeroSectionProps) {
   useEffect(() => {
     const loadedImages: HTMLImageElement[] = [];
     let loadCounter = 0;
+    const INITIAL_PRELOAD_COUNT = Math.min(12, LOAD_COUNT);
 
     const safetyTimeout = setTimeout(() => {
-      if (loadCounter < LOAD_COUNT) {
-        console.warn("Frame preloader safety timeout triggered.");
+      if (loadCounter < INITIAL_PRELOAD_COUNT) {
+        console.warn("Initial frame preloader safety timeout triggered.");
         dispatchLoaderState(100, "Finalizing memory load...", true);
         setLoaded(true);
       }
-    }, 15000);
+    }, 8000);
 
     dispatchLoaderState(0, "Initializing visual stream...", false);
 
-    for (let i = 0; i < LOAD_COUNT; i++) {
+    // Progressive loading logic:
+    // First, load initial critical frames (indices 0 to 11) to get the page showing instantly
+    let initialLoaded = 0;
+    for (let i = 0; i < INITIAL_PRELOAD_COUNT; i++) {
       const img = new Image();
       img.src = getFramePath(i);
       
       img.onload = () => {
         loadedImages[i] = img;
         loadCounter++;
+        initialLoaded++;
         
-        const percentage = (loadCounter / LOAD_COUNT) * 100;
-        
+        const percentage = (initialLoaded / INITIAL_PRELOAD_COUNT) * 100;
         let status = "Synchronizing memory...";
-        if (percentage < 30) status = "Retrieving frame layers...";
-        else if (percentage < 60) status = "Rebuilding spatial memory...";
-        else if (percentage < 90) status = "Optimizing quality layers...";
+        if (percentage < 40) status = "Retrieving frame layers...";
+        else if (percentage < 80) status = "Rebuilding spatial memory...";
         
-        dispatchLoaderState(percentage, status, false);
+        dispatchLoaderState(percentage * 0.8, status, false); // scaled down since it's initial load
 
-        if (loadCounter === LOAD_COUNT) {
+        if (initialLoaded === INITIAL_PRELOAD_COUNT) {
           clearTimeout(safetyTimeout);
-          setImages(loadedImages);
+          setImages([...loadedImages]);
           setLoaded(true);
           dispatchLoaderState(100, "Synchronization complete", true);
+          
+          // Start background loading of all other frames in batches of 5 to avoid network congestion
+          loadRemaining();
         }
       };
 
       img.onerror = () => {
-        console.error(`Failed to load frame mapping ${i}`);
+        console.error(`Failed to load critical frame ${i}`);
         loadCounter++;
-        if (loadCounter === LOAD_COUNT) {
+        initialLoaded++;
+        if (initialLoaded === INITIAL_PRELOAD_COUNT) {
           clearTimeout(safetyTimeout);
-          setImages(loadedImages);
+          setImages([...loadedImages]);
           setLoaded(true);
           dispatchLoaderState(100, "Synchronization complete", true);
+          loadRemaining();
         }
       };
     }
 
-    return () => clearTimeout(safetyTimeout);
+    const loadRemaining = async () => {
+      const batchSize = 5;
+      for (let i = INITIAL_PRELOAD_COUNT; i < LOAD_COUNT; i += batchSize) {
+        const promises = [];
+        for (let j = 0; j < batchSize && (i + j) < LOAD_COUNT; j++) {
+          const idx = i + j;
+          promises.push(new Promise<void>((resolve) => {
+            const img = new Image();
+            img.src = getFramePath(idx);
+            img.onload = () => {
+              loadedImages[idx] = img;
+              loadCounter++;
+              resolve();
+            };
+            img.onerror = () => {
+              loadCounter++;
+              resolve();
+            };
+          }));
+        }
+        await Promise.all(promises);
+        // Periodically update the state so images render on scroll
+        setImages([...loadedImages]);
+      }
+    };
+
+    return () => {
+      clearTimeout(safetyTimeout);
+    };
   }, []);
 
   // 2. Responsive Canvas Sizing (fitting portrait screens completely and covering landscape screens)
@@ -159,7 +195,24 @@ export function HeroSection({ storyData }: HeroSectionProps) {
       canvas.width = window.innerWidth * pixelRatio;
       canvas.height = window.innerHeight * pixelRatio;
       
-      const activeImg = images[currentFrame];
+      let activeImg = images[currentFrame];
+      if (!activeImg) {
+        // Fallback to nearest loaded frame
+        let prevIdx = currentFrame - 1;
+        let nextIdx = currentFrame + 1;
+        while (prevIdx >= 0 || nextIdx < LOAD_COUNT) {
+          if (prevIdx >= 0 && images[prevIdx]) {
+            activeImg = images[prevIdx];
+            break;
+          }
+          if (nextIdx < LOAD_COUNT && images[nextIdx]) {
+            activeImg = images[nextIdx];
+            break;
+          }
+          prevIdx--;
+          nextIdx++;
+        }
+      }
       if (activeImg) {
         drawImageProp(ctx, activeImg, canvas);
       }
@@ -192,7 +245,24 @@ export function HeroSection({ storyData }: HeroSectionProps) {
         const frameIndex = Math.min(LOAD_COUNT - 1, Math.floor(progress * LOAD_COUNT));
         setCurrentFrame(frameIndex);
 
-        const img = images[frameIndex];
+        let img = images[frameIndex];
+        if (!img) {
+          // Fallback to nearest loaded frame
+          let prevIdx = frameIndex - 1;
+          let nextIdx = frameIndex + 1;
+          while (prevIdx >= 0 || nextIdx < LOAD_COUNT) {
+            if (prevIdx >= 0 && images[prevIdx]) {
+              img = images[prevIdx];
+              break;
+            }
+            if (nextIdx < LOAD_COUNT && images[nextIdx]) {
+              img = images[nextIdx];
+              break;
+            }
+            prevIdx--;
+            nextIdx++;
+          }
+        }
         if (img) {
           drawImageProp(ctx, img, canvas);
         }

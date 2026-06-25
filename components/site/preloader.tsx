@@ -40,9 +40,9 @@ export function Preloader() {
       .fromTo(tagline, { y: 12, opacity: 0 }, { y: 0, opacity: 0.6, duration: 0.6 }, "-=0.4")
       .fromTo(progressWrapper, { opacity: 0 }, { opacity: 1, duration: 0.5 }, "-=0.3");
 
-    // Standard Exit Timeline (Fallback if not controlled by frame loader)
-    const fallbackTimeout = setTimeout(() => {
-      if (!isControlled && !animTriggered.current) {
+    // Universal Safety Timeout: Dismiss preloader after 6 seconds max
+    const safetyTimeout = setTimeout(() => {
+      if (!animTriggered.current) {
         animTriggered.current = true;
         gsap.to(container, {
           yPercent: -100,
@@ -54,7 +54,7 @@ export function Preloader() {
           }
         });
       }
-    }, 2000); // Wait 2 seconds for typical static loads before sliding up
+    }, 6000);
 
     // Progress updates from the React Frame preloader
     const handleProgress = (e: Event) => {
@@ -71,11 +71,11 @@ export function Preloader() {
 
     return () => {
       introTimeline.kill();
-      clearTimeout(fallbackTimeout);
+      clearTimeout(safetyTimeout);
       window.removeEventListener("frame-loader-progress", handleProgress);
       document.body.style.overflow = "";
     };
-  }, [isControlled]);
+  }, []);
 
   // Watch for isComplete to trigger slide-up exit transition
   useEffect(() => {
