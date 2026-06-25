@@ -105,35 +105,45 @@ export function HeroSection({ storyData }: HeroSectionProps) {
     return () => clearTimeout(safetyTimeout);
   }, []);
 
-  // 2. Cover Sizing Canvas function (like background-size: cover)
+  // 2. Responsive Canvas Sizing (fitting portrait screens completely and covering landscape screens)
   const drawImageProp = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, canvas: HTMLCanvasElement) => {
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
     const imgWidth = img.width;
     const imgHeight = img.height;
 
-    const r = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight);
-    let nw = imgWidth * r;
-    let nh = imgHeight * r;
-    let ar = 1;
-
-    if (nw < canvasWidth) ar = canvasWidth / nw;
-    if (Math.abs(ar - 1) < 1e-14 && nh < canvasHeight) ar = canvasHeight / nh;
-    
-    nw *= ar;
-    nh *= ar;
-
-    const cw = imgWidth / (nw / canvasWidth);
-    const ch = imgHeight / (nh / canvasHeight);
-
-    const cx = (imgWidth - cw) * 0.5;
-    const cy = (imgHeight - ch) * 0.5;
-
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    ctx.drawImage(img, cx, cy, cw, ch, 0, 0, canvasWidth, canvasHeight);
+
+    // Mobile / Portrait Mode: fit the complete screen width (contain) to prevent cropping
+    if (canvasWidth < canvasHeight) {
+      const scale = canvasWidth / imgWidth;
+      const nw = canvasWidth;
+      const nh = imgHeight * scale;
+      const dy = (canvasHeight - nh) * 0.5; // Center vertically
+      ctx.drawImage(img, 0, 0, imgWidth, imgHeight, 0, dy, nw, nh);
+    } else {
+      // Desktop / Landscape Mode: fill the container (cover)
+      const r = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight);
+      let nw = imgWidth * r;
+      let nh = imgHeight * r;
+      let ar = 1;
+
+      if (nw < canvasWidth) ar = canvasWidth / nw;
+      if (Math.abs(ar - 1) < 1e-14 && nh < canvasHeight) ar = canvasHeight / nh;
+      
+      nw *= ar;
+      nh *= ar;
+
+      const cw = imgWidth / (nw / canvasWidth);
+      const ch = imgHeight / (nh / canvasHeight);
+
+      const cx = (imgWidth - cw) * 0.5;
+      const cy = (imgHeight - ch) * 0.5;
+
+      ctx.drawImage(img, cx, cy, cw, ch, 0, 0, canvasWidth, canvasHeight);
+    }
   };
 
   // 3. Canvas Resizing Effect
@@ -211,14 +221,29 @@ export function HeroSection({ storyData }: HeroSectionProps) {
     });
   };
 
-  // 6. Section Progress Checks for Narrative Cards
-  const isHeroActive = scrollProgress >= 0 && scrollProgress < 0.15;
-  const heroOpacity = Math.max(0, 1 - scrollProgress / 0.15);
+  // 6. Section Progress Checks using the original frame index (0 to 944)
+  const originalFrame = currentFrame * STEP;
 
+  // Hero text overlay: starts after frame 30, fades out by frame 160
+  const isHeroActive = originalFrame >= 30 && originalFrame <= 160;
+  
+  let heroOpacity = 0;
+  if (originalFrame >= 30 && originalFrame <= 60) {
+    // Smooth fade in (frames 30 to 60)
+    heroOpacity = (originalFrame - 30) / 30;
+  } else if (originalFrame > 60 && originalFrame < 130) {
+    // Fully visible (frames 60 to 130)
+    heroOpacity = 1;
+  } else if (originalFrame >= 130 && originalFrame <= 160) {
+    // Smooth fade out (frames 130 to 160)
+    heroOpacity = (160 - originalFrame) / 30;
+  }
+
+  // Chapters frame ranges (starting after the hero sections ends at 160, running up to 880)
   const getChapterIntervals = () => {
     const chaptersCount = storyData.length;
-    const start = 0.20;
-    const end = 0.88;
+    const start = 180;
+    const end = 880;
     const intervalSize = (end - start) / chaptersCount;
     return storyData.map((_, index) => {
       const chStart = start + index * intervalSize;
@@ -227,14 +252,16 @@ export function HeroSection({ storyData }: HeroSectionProps) {
   };
 
   const intervals = getChapterIntervals();
-  const isMemorandumActive = scrollProgress >= 0.90 && scrollProgress <= 1.0;
+  
+  // Outro Memorandum starts after frame 900
+  const isMemorandumActive = originalFrame >= 900 && originalFrame <= 944;
 
   return (
     <div ref={containerRef} className="relative w-full h-[650vh] bg-[#0a0807]">
       {/* Sticky Viewport Wrapper */}
       <div ref={stickyRef} className="sticky top-0 left-0 w-full h-[100svh] overflow-hidden">
         {/* Canvas Render Layer */}
-        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover z-0" />
+        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-0" />
         
         {/* Visual Vignette & Scanlines filters */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_40%,rgba(10,8,7,0.72)_82%,rgba(10,8,7,0.92)_100%)] pointer-events-none z-10" />
@@ -285,7 +312,7 @@ export function HeroSection({ storyData }: HeroSectionProps) {
           {/* SECTION B: Dynamic Chapters Overlay */}
           {storyData.map((item, index) => {
             const range = intervals[index];
-            const isActive = scrollProgress >= range.start && scrollProgress <= range.end;
+            const isActive = originalFrame >= range.start && originalFrame <= range.end;
             const isAlternate = index % 2 !== 0;
 
             return (
@@ -296,7 +323,7 @@ export function HeroSection({ storyData }: HeroSectionProps) {
                     isAlternate ? "justify-end" : "justify-start"
                   }`}
                 >
-                  <div className="bg-[rgba(13,13,16,0.52)] border border-white/10 rounded-2xl p-8 sm:p-10 max-w-[480px] backdrop-blur-2xl shadow-panel animate-[fadeInUp_0.6s_ease-out_forwards]">
+                  <div className="bg-[rgba(13,13,16,0.52)] border border-white/10 rounded-2xl p-8 sm:p-10 max-w-[480px] w-full backdrop-blur-2xl shadow-panel animate-[fadeInUp_0.6s_ease-out_forwards]">
                     <span className="font-serif text-sm font-semibold text-[#e0a96d] tracking-[0.2em] block mb-4">
                       {item.chapter || (index + 1)}
                     </span>
@@ -346,7 +373,7 @@ export function HeroSection({ storyData }: HeroSectionProps) {
                 {/* Timeline Scrubber */}
                 <div className="flex items-center gap-4 flex-grow">
                   <span className="text-[0.65rem] font-bold text-[#f5e6d3]/60 tracking-wider">
-                    {(currentFrame + 1).toString().padStart(3, "0")}
+                    {Math.min(945, currentFrame * STEP + 1).toString().padStart(3, "0")}
                   </span>
                   
                   <div className="relative flex-grow h-4 flex items-center">
@@ -365,7 +392,7 @@ export function HeroSection({ storyData }: HeroSectionProps) {
                   </div>
 
                   <span className="text-[0.65rem] font-bold text-[#f5e6d3]/60 tracking-wider">
-                    {LOAD_COUNT.toString().padStart(3, "0")}
+                    945
                   </span>
                 </div>
 
